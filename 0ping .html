@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0ping個人網站 - 資訊安全與網頁開發</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #e2e8f0;
+            background-color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        #bg-3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            padding: 4rem 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .nav-item {
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            display: block;
+            margin-top: 5px;
+            right: 0;
+            background: #fde047;
+            transition: width 0.4s ease;
+        }
+
+        .nav-item:hover::after {
+            width: 100%;
+            left: 0;
+            background: #fde047;
+        }
+
+        .section-title {
+            position: relative;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: #fde047;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 100%;
+            height: 4px;
+            background: #fde047;
+            border-radius: 2px;
+        }
+
+        .card {
+            background-color: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-card {
+            background-color: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-scroll-to-top {
+            background-color: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid #fde047;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .btn-scroll-to-top:hover {
+            transform: translateY(-5px);
+        }
+
+        .hero-section-text {
+            animation: fadeInScale 1s ease-out forwards;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 antialiased">
+
+    <!-- 3D Background Canvas -->
+    <canvas id="bg-3d"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 py-4 px-8 bg-gray-900 bg-opacity-70 backdrop-blur-md">
+        <div class="container flex justify-between items-center">
+            <a href="01 (1).jpg" class="text-3xl font-extrabold text-white tracking-wider">
+                <span class="text-yellow-400">0ping</span>
+            </a>
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-8 text-lg font-semibold">
+                <a href="#about" class="nav-item hover:text-yellow-400">關於我</a>
+                <a href="#skills" class="nav-item hover:text-yellow-400">技術與證照</a>
+                <a href="#projects" class="nav-item hover:text-yellow-400">學術成果</a>
+                <a href="#blog" class="nav-item hover:text-yellow-400">我的部落格</a>
+                <a href="#contact" class="nav-item hover:text-yellow-400">聯絡我</a>
+            </div>
+
+            <!-- Mobile Hamburger Menu -->
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-white focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu (Hidden by default) -->
+    <div id="mobile-menu" class="fixed top-0 left-0 w-full h-screen bg-gray-900 bg-opacity-95 backdrop-blur-md z-40 hidden flex-col items-center justify-center space-y-8 text-2xl font-bold">
+        <button id="close-menu-btn" class="absolute top-6 right-8 text-white focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <a href="#about" class="text-white hover:text-yellow-400" onclick="hideMobileMenu()">關於我</a>
+        <a href="#skills" class="text-white hover:text-yellow-400" onclick="hideMobileMenu()">技術與證照</a>
+        <a href="#projects" class="text-white hover:text-yellow-400" onclick="hideMobileMenu()">學術成果</a>
+        <a href="#blog" class="text-white hover:text-yellow-400" onclick="hideMobileMenu()">我的部落格</a>
+        <a href="#contact" class="text-white hover:text-yellow-400" onclick="hideMobileMenu()">聯絡我</a>
+    </div>
+
+    <!-- Hero Section -->
+    <header id="home" class="relative flex flex-col items-center justify-center min-h-screen text-center p-4">
+        <div class="relative z-10 hero-section-text">
+            <h1 class="text-6xl md:text-8xl font-black text-white mb-4">0ping的個人網站</h1>
+            <p class="text-2xl md:text-3xl text-gray-300 font-light mb-8">
+                <span class="text-yellow-400">資訊安全</span>、<span class="text-yellow-400">網頁開發</span> 與 <span class="text-yellow-400">IoT</span> 學生
+            </p>
+            <!-- New Motto Added Here -->
+            <p class="text-xl md:text-2xl text-yellow-200 font-normal mb-8">
+            我看到你忽略的細節 潛入妳以為安全的世界🔍。
+            </p>
+            <a href="#contact" class="inline-block px-8 py-4 text-xl font-bold text-gray-900 bg-yellow-400 rounded-full hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105">
+                聯絡我
+            </a>
+        </div>
+    </header>
+
+    <!-- About Me Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">關於我</h2>
+            <div class="card grid md:grid-cols-2 gap-8 items-center">
+                <div class="p-6">
+                    <img src="01 (1).jpg" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1a202c/fde047?text=Your+Photo';" alt="個人照片" class="rounded-full w-48 h-48 mx-auto mb-6 border-4 border-yellow-400">
+                </div>
+                <div class="p-6 text-lg leading-relaxed">
+                    <p class="mb-4">
+                        我是一位對資訊安全和網頁開發充滿熱情的高中生。
+                        因為小時候在玩遊戲的時候中病毒所以我從此有了報復的心態，所以我慢慢走進了資安的學術研究。
+                        在我的學術生涯中，我深入研究了多項資安議題，並將理論知識應用於實際的網頁開發專案。
+                    </p>
+                    <p>
+                        除了專業領域，我也對大數據分析、物聯網（IOT）和人工智慧 有著濃厚的興趣。
+                        我熱衷於透過技術解決問題，並不斷學習新技能以應對快速變化的科技環境。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Skills Section -->
+    <section id="skills" class="section">
+        <div class="container">
+            <h2 class="section-title">技術與證照</h2>
+            <div class="card">
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-yellow-400">資安技能</h3>
+                        <ul class="space-y-2 text-lg">
+                            <li>網路安全基礎</li>
+                            <li>Web應用程式滲透測試</li>
+                            <li>惡意軟體分析</li>
+                            <li>window攻防</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-yellow-400">網頁開發</h3>
+                        <ul class="space-y-2 text-lg">
+                            <li>HTML5, CSS3, JavaScript</li>
+                            <li>AI數據分析</li>
+                            <li>Git版本控制</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-yellow-400">其他專長與證照</h3>
+                        <ul class="space-y-2 text-lg">
+                            <li>大數據分析與資料處理</li>
+                            <li>物聯網（IoT）開發</li>
+                            <li>電腦硬體裝修丙級證照</li>
+                            <li>合格救生員</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-yellow-400">現任幹部</h3>
+                        <ul class="space-y-2 text-lg">
+                            <li>內湖高工資安團隊:副負責人、資安助教</li>
+                            <li>2026學生計算機年會(網頁設計)組員</li>
+                            <li>高中生循環經濟資訊維護組資安人員</li>
+                            <li>THJCC CTF美宣</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-yellow-400">競賽經驗</h3>
+                        <ul class="space-y-2 text-lg">
+                            <li>2024年THJCC CTF沒得名(菜菜QAQ)</li>
+                            <li>2025年高中部資通安全黑客松第四名</li>
+                            <li>2025年高中部Power Tech青少年科技創作競賽(國際賽)第一名</li>
+                            <li>2025年高中部Power Tech青少年科技創作競賽新北市(北區賽)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-yellow-400">研習</h3>
+                        <ul class="space-y-2 text-lg">
+                            <li>InfoSec Taiwan 2025 會眾</li>
+                            <li>taipeiblockchainweek 2025 會眾</li>
+                            <li>innovation sponsors 2025 會眾</li>
+                            <li>Qeacon 2025 會眾</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academic Achievements Section -->
+    <section id="projects" class="section">
+        <div class="container">
+            <h2 class="section-title">教學成果</h2>
+            <div class="card">
+                <ul class="space-y-6 text-lg">
+                    <li class="p-4 rounded-lg bg-gray-800 border-l-4 border-yellow-400">
+                        <h4 class="text-xl font-semibold text-yellow-200">資安宣導</h4>
+                        <p class="mt-2 text-gray-300">
+                            教學主題：在網路世界，誰可以保護你?🤔資安宣導
+                        </p>
+                    </li>
+                    <li class="p-4 rounded-lg bg-gray-800 border-l-4 border-yellow-400">
+                        <h4 class="text-xl font-semibold text-yellow-200">CTF競賽解題</h4>
+                        <p class="mt-2 text-gray-300">
+                            製作多項不一樣的CTF專項題目，並在社課做解說教學。
+                        </p>
+                    </li>
+                    <li class="p-4 rounded-lg bg-gray-800 border-l-4 border-yellow-400">
+                        <h4 class="text-xl font-semibold text-yellow-200">高中職資通安全</h4>
+                        <p class="mt-2 text-gray-300">
+                            於2025年7月參加教育部舉辦的高中職資通安全黑客松，並於找尋多項危險漏洞並向企業回報。
+                        </p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="section">
+        <div class="container">
+            <h2 class="section-title">我製作的筆記</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Blog Post 1 -->
+                <div class="blog-card p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-semibold text-yellow-400 mb-2">資安筆記：常見的弱點掃描工具</h3>
+                    <p class="text-gray-300 text-sm mb-4">更新日期：2024年5月</p>
+                    <p class="text-gray-400 text-sm">介紹幾種常用的網站弱點掃描工具，並分析它們的優缺點與應用場景。</p>
+                </div>
+                <!-- Blog Post 2 -->
+                <div class="blog-card p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-semibold text-yellow-400 mb-2">網頁開發 筆記:天氣預報結合資訊安全漏洞分析</h3>
+                    <p class="text-gray-300 text-sm mb-4">更新日期：2025年8月</p>
+                    <p class="text-gray-400 text-sm">使用網頁開發等技術，開發出一項有天氣預報的功能，並分析其潛在的資訊安全漏洞。</p>
+                </div>
+                <!-- Blog Post 3 -->
+                <div class="blog-card p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-semibold text-yellow-400 mb-2">IOT 筆記：ESP32 與感測器資料處理</h3>
+                    <p class="text-gray-300 text-sm mb-4">更新日期：2024年3月</p>
+                    <p class="text-gray-400 text-sm">記錄了如何使用 ESP32 微控制器讀取多種感測器數據，並將其傳輸至雲端平台。</p>
+                </div>
+                <!-- Blog Post 4 -->
+                <div class="blog-card p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-semibold text-yellow-400 mb-2">資安筆記：資安入門該學的東西及須知的事項</h3>
+                    <p class="text-gray-300 text-sm mb-4">更新日期：2024年2月</p>
+                    <p class="text-gray-400 text-sm">概述了資安入門的基本概念與須知事項，適合初學者入門。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title">聯絡我</h2>
+            <div class="card text-center p-8">
+                <p class="text-xl mb-6">歡迎與我聯繫，共同探討資訊安全與網頁開發新的肝OWO</p>
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
+                    <a href="mailto:your-email@example.com" class="flex items-center space-x-2 text-yellow-400 text-lg hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-2 2a2 2 0 00-2-2h-8a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2v-6z" />
+                        </svg>
+                        <span>Gmail</span>
+                    </a>
+                    <a href="https://github.com/casper3790" target="_blank" class="flex items-center space-x-2 text-yellow-400 text-lg hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.809 1.305 3.493.998.108-.77.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.465-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.046.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.652.242 2.873.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.802.576 4.765-1.589 8.197-6.091 8.197-11.387c0-6.627-5.373-12-12-12z" />
+                        </svg>
+                        <span>Github</span>
+                    </a>
+                    <a href="https://instagram.com/casp3790er" target="_blank" class="flex items-center space-x-2 text-yellow-400 text-lg hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07c3.252.148 4.685 1.968 4.898 4.298.216 2.502.216 2.651.216 8.441v.96c0 3.252-1.968 4.685-4.298 4.898-2.502.216-2.651.216-8.441.216h-.96c-3.252 0-4.685-1.968-4.898-4.298-.216-2.502-.216-2.651-.216-8.441v-.96c0-3.252 1.968-4.685 4.298-4.898 2.502-.216 2.651-.216 8.441-.216zM12 0c-3.267 0-3.682.016-4.992.071C3.12 1.43 1.47 3.08 1.134 7.008c-.055 1.31-.071 1.725-.071 4.992s.016 3.682.071 4.992c.336 3.928 1.986 5.578 5.874 5.914 1.31.055 1.725.071 4.992.071s3.682-.016 4.992-.071c3.888-.336 5.538-1.986 5.874-5.914.055-1.31.071-1.725.071-4.992s-.016-3.682-.071-4.992c-.336-3.888-1.986-5.538-5.914-5.874-1.31-.055-1.725-.071-4.992-.071zM12 5.833a6.167 6.167 0 100 12.334A6.167 6.167 0 0012 5.833zM12 7.5a4.5 4.5 0 110 9A4.5 4.5 0 0112 7.5zM17.25 4.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                    <!-- Discord 連結 -->
+                    <a href="https://discord.com/users/casp3790er" target="_blank" class="flex items-center space-x-2 text-yellow-400 text-lg hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.246 3.25c-1.314-.76-2.822-1.125-4.32-.888-.707.117-1.42.383-2.09.845-.363.242-.714.526-1.04.83-.564.527-1.07 1.09-1.536 1.7-.107.135-.198.275-.286.417-.502.778-.96 1.583-1.35 2.417-.074.15-.152.298-.225.447-.393.79-.75 1.602-1.066 2.427-.08.208-.158.417-.233.628-.15.42-.29.844-.418 1.272-.258.88-.475 1.77-.66 2.66-.118.55-.213 1.11-.274 1.673-.09 1.12.025 2.222.386 3.282.26.758.643 1.503 1.068 2.196.505.81.996 1.597 1.62 2.308.528.6.994 1.196 1.624 1.734 1.11.968 2.433 1.666 3.86 1.956 1.79.367 3.593.187 5.29-.46.85-.32 1.685-.75 2.47-1.32.748-.54 1.45-1.16 2.05-1.89.65-1.036 1.15-2.222 1.48-3.524.32-1.32.32-2.67.13-4.04-.158-1.127-.47-2.242-.904-3.32-.42-1.05-.93-2.065-1.55-3.03-.45-.69-.955-1.35-1.52-1.97-.245-.26-.505-.51-.77-.75-1.058-.95-2.277-1.49-3.705-1.61-1.36-.12-2.73.08-4.06.63-.64.27-1.28.61-1.87 1.01-.25.17-.48.36-.7.57-.45.44-.88.9-.94 1.34-.1.74.22 1.47.8 1.99.1.09.21.17.32.25.75.58 1.64.92 2.58.98.67.04 1.35-.07 2-.27.28-.09.57-.2.85-.3.86-.31 1.69-.76 2.42-1.34.67-.53 1.25-1.2 1.71-1.95.4-.64.71-1.34.89-2.1.25-1.04.35-2.07.28-3.13-.08-1.2-.42-2.37-.96-3.46z" />
+                        </svg>
+                        <span>Discord</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-500 text-sm">
+        <p>&copy; 2025 0ping網站. All Rights Reserved.</p>
+        <button onclick="scrollToTop()" class="btn-scroll-to-top mt-4 px-4 py-2 rounded-full text-sm text-yellow-400 font-bold">
+            回到頂部
+        </button>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Back to top button
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // --- Mobile Menu Toggle ---
+        const menuBtn = document.getElementById('menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function showMobileMenu() {
+            mobileMenu.classList.remove('hidden');
+            mobileMenu.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+        }
+
+        function hideMobileMenu() {
+            mobileMenu.classList.add('hidden');
+            mobileMenu.classList.remove('flex');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+        }
+
+        menuBtn.addEventListener('click', showMobileMenu);
+        closeMenuBtn.addEventListener('click', hideMobileMenu);
+
+        // --- Three.js 3D Background - Starry Night ---
+        
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: document.getElementById('bg-3d') });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0); // Transparent background
+
+        // Create a star field
+        const starGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+        const numStars = 5000;
+        for (let i = 0; i < numStars; i++) {
+            const x = THREE.MathUtils.randFloatSpread(2000);
+            const y = THREE.MathUtils.randFloatSpread(2000);
+            const z = THREE.MathUtils.randFloatSpread(2000);
+            starVertices.push(x, y, z);
+        }
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+
+        const starMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 1.5,
+            sizeAttenuation: true,
+            transparent: true,
+            opacity: 0.9
+        });
+
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        camera.position.z = 5;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animate stars to create a subtle motion effect
+            stars.rotation.x += 0.0001;
+            stars.rotation.y += 0.0002;
+            
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Use a placeholder image since the original file is missing
+        const personalPhoto = document.querySelector('img[alt="個人照片"]');
+        if (personalPhoto.getAttribute('src') === '09018.jpg') {
+            personalPhoto.setAttribute('src', 'https://placehold.co/400x400/1a202c/fde047?text=Your+Photo');
+        }
+
+        window.onload = function() {
+            animate();
+        };
+    </script>
+</body>
+</html>
