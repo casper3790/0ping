@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0ping個人網站 - 資訊安全與網頁開發</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #e2e8f0;
+            background-color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        #bg-3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        #bg-3d canvas {
+            display: block;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            background-color: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #334155;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #475569;
+        }
+
+        /* --- 好友牆滾動樣式 --- */
+        #friends-container-wrapper {
+            -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+        }
+
+        #friends-scroller {
+            animation: scrollLeft 40s linear infinite;
+        }
+
+        .friend-card {
+            width: 150px;
+        }
+
+        #friends-container-wrapper:hover #friends-scroller {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollLeft {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="bg-3d"></div>
+
+    <div class="container mx-auto px-4 md:px-6 relative z-10">
+
+        <nav class="py-6 flex justify-center sticky top-0 bg-transparent z-50">
+            <ul class="flex space-x-6 md:space-x-10 backdrop-blur-sm bg-slate-900/50 p-3 rounded-full shadow-xl border border-slate-700/50">
+                <li><a href="#about" class="text-slate-200 hover:text-cyan-400 transition font-semibold">關於我</a></li>
+                <li><a href="#skills" class="text-slate-200 hover:text-cyan-400 transition font-semibold">技能樹</a></li>
+                <li><a href="#projects" class="text-slate-200 hover:text-cyan-400 transition font-semibold">專案</a></li>
+                <li><a href="#friends" class="text-slate-200 hover:text-cyan-400 transition font-semibold">我的好友</a></li>
+                <li><a href="#contact" class="text-slate-200 hover:text-cyan-400 transition font-semibold">聯繫我</a></li>
+            </ul>
+        </nav>
+
+        <header id="hero" class="pt-16 md:pt-24 pb-16 text-center">
+            <img src="01.png" onerror="this.onerror=null; this.src='https://placehold.co/400x400/1a202c/fde047?text=0ping'" alt="個人照片" class="rounded-full w-48 h-48 object-cover mx-auto mb-6 border-4 border-cyan-400 shadow-2xl">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-white">
+                你好，我是 0ping
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-400 mb-8">專注於資訊安全、網頁開發與帶領團隊。</p>
+            <div class="space-x-4">
+                <a href="#contact" class="bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 inline-block">聯繫我</a>
+                <a href="#projects" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 inline-block">查看作品集</a>
+            </div>
+        </header>
+
+        <section id="about" class="py-16 md:py-24 border-t border-slate-800">
+            <h2 class="text-4xl font-extrabold text-cyan-400 mb-12 text-center tracking-tight">關於我</h2>
+            <div class="max-w-3xl mx-auto bg-slate-800 p-8 rounded-xl shadow-2xl">
+                <p class="text-lg text-slate-300 leading-relaxed mb-4">
+                   我是一位對資訊安全和網頁開發充滿熱情的高中生。
+                   因為小時候在玩遊戲的時候中病毒所以我從此有了報復的心態，所以我慢慢走進了資安的學術研究。
+                   在我的學術生涯中，我深入研究了多項資安議題，並將理論知識應用於實際的網頁開發專案，我在資訊領域擁有多年的經驗，熱衷於探索最新的網頁技術，並致力於提升應用程式的安全性。我深信好的程式碼不僅要高效，更要經得起安全性的考驗。
+                </p>
+                <p class="text-lg text-slate-300 leading-relaxed">
+                   除了技術專業，我參與社群活動，曾擔任 NIHSCEIWHC 白帽資安社群的總召，帶領團隊進行多次資安演練和工作坊。我相信團隊合作和持續學習是成長的關鍵，期待未來能在資訊安全和網頁開發領域創造更多故事。    
+            </div>
+        </section>
+
+        <section id="skills" class="py-16 md:py-24 border-t border-slate-800">
+            <h2 class="text-5xl font-extrabold text-cyan-400 mb-12 text-center tracking-tight">核心技能</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                <div class="bg-slate-800 p-6 rounded-lg text-center shadow-md hover:bg-slate-700 transition duration-300 border border-slate-700 hover:border-cyan-400">
+                    <p class="text-4xl mb-2 text-white">🛡️</p>
+                    <p class="font-bold text-cyan-300 text-xl">資訊安全</p>
+                    <p class="text-base text-slate-400">XSS, SQL, OWASP Top 10</p>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-lg text-center shadow-md hover:bg-slate-700 transition duration-300 border border-slate-700 hover:border-cyan-400">
+                    <p class="text-4xl mb-2 text-white">🌐</p>
+                    <p class="font-bold text-cyan-300 text-xl">前端開發</p>
+                    <p class="text-base text-slate-400">HTML, CSS、JS</p>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-lg text-center shadow-md hover:bg-slate-700 transition duration-300 border border-slate-700 hover:border-cyan-400">
+                    <p class="text-4xl mb-2 text-white">⚙️</p>
+                    <p class="font-bold text-cyan-300 text-xl">後端程式</p>
+                    <p class="text-base text-slate-400">Python, Node.js </p>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-lg text-center shadow-md hover:bg-slate-700 transition duration-300 border border-slate-700 hover:border-cyan-400">
+                    <p class="text-4xl mb-2 text-white">🖥️</p>
+                    <p class="font-bold text-cyan-300 text-xl">團隊治理</p>
+                    <p class="text-base text-slate-400">NIHSCEIWHC白帽資安社群</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-16 md:py-24 border-t border-slate-800">
+            <h2 class="text-4xl font-extrabold text-cyan-400 mb-12 text-center tracking-tight">專案與作品集</h2>
+            
+            <h3 class="text-3xl font-bold text-white mb-6 mt-8 border-b border-cyan-700 pb-2">🛡️ 資訊安全 (Cyber Security)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                
+                <a href="#" target="_blank" rel="noopener noreferrer" class="block" title="請將此替換為您的滲透測試專案網址">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">Web 應用程式滲透測試 </h3>
+                            <p class="text-slate-300 mb-4">研究常見的 Web 應用程式安全漏洞 (如 XSS, SQL Injection)，並提供修復建議。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">漏洞分析</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="#" target="_blank" rel="noopener noreferrer" class="block" title="請將此替換為您的 CTF 筆記網址">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">CTF 挑戰解題筆記 </h3>
+                            <p class="text-slate-300 mb-4">收集與整理各類 Pico CTF 競賽的 Web/Pwn/Crypto 解題思路與實戰技巧。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">實戰演練</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://casper3790.github.io/0ping-my/my.html" target="_blank" rel="noopener noreferrer" class="block" title="https://casper3790.github.io/0ping-my/my.html">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">資安社群的總召 </h3>
+                            <p class="text-slate-300 mb-4">點擊此處查看您詳細的資安網站。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">團隊製作</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-3xl font-bold text-white mb-6 mt-8 border-b border-cyan-700 pb-2">🕹️ 遊戲開發 (Game Development)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                
+                <a href="https://casper3790.github.io/Security-Dinosaur/03.html" target="_blank" rel="noopener noreferrer" class="block" title="https://casper3790.github.io/Security-Dinosaur/03.html">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">資安版小恐龍</h3>
+                            <p class="text-slate-300 mb-4">這是一個資安版的小恐龍，還有許多dug還沒改好QAQ。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">Game/JS</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://casper3790.github.io/A-chicken-crossing-the-road-/TC.html" target="_blank" rel="noopener noreferrer" class="block" title="https://casper3790.github.io/A-chicken-crossing-the-road-/TC.html">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">小雞過馬路 </h3>
+                            <p class="text-slate-300 mb-4">這是一個有趣的遊戲，幫助小雞安全過馬路，避免障礙物。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">Canvas/JS</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="https://casper3790.github.io/Detective-game/Detective%20game" target="_blank" rel="noopener noreferrer" class="block" title="https://casper3790.github.io/Detective-game/Detective%20game">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">偵探遊戲 </h3>
+                            <p class="text-slate-300 mb-4">利用 JavaScript 和 Canvas 處理技術，創建一個互動式的偵探遊戲。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">Game Development</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></path></svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <h3 class="text-3xl font-bold text-white mb-6 mt-8 border-b border-cyan-700 pb-2">💻 網站開發 (Web Development)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                
+                <a href="#hero" class="block" title="這是本網站，點擊回到頂部">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">響應式個人網站 (本站)</h3>
+                            <p class="text-slate-300 mb-4">使用 HTML, Tailwind CSS 和 Three.js 建構，提供最佳的跨裝置瀏覽體驗。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">網站設計</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://casper3790.github.io/High-School-Psychology-Tree-Hole/index2.html" target="_blank" rel="noopener noreferrer" class="block" title="https://casper3790.github.io/High-School-Psychology-Tree-Hle/index2.html">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">高中職生談心的網站平台 </h3>
+                            <p class="text-slate-300 mb-4">這是一個專為高中職生設計的線上談心平台，提供安全的匿名聊天環境。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">談心🥲</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://nihsceiwhc.github.io/Social-official-website/" target="_blank" rel="noopener noreferrer" class="block" title="https://nihsceiwhc.github.io/Social-official-website/">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">NIHSCEIWHC白帽資安社群 </h3>
+                            <p class="text-slate-300 mb-4">這是一個致力於資訊安全的社群，提供資源和支持給白帽駭客同學。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">網站架設</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://casper3790.github.io/weather-forecast/weather%20forecast.html" target="_blank" rel="noopener noreferrer" class="block" title="https://casper3790.github.io/weather-forecast/weather%20forecast.html">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">即時氣象資訊查詢{畢業專題} </h3>
+                            <p class="text-slate-300 mb-4">串接第三方公開 API，提供響應式的介面來顯示全球各地的即時天氣數據和預報。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">API Integration</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-3xl font-bold text-white mb-6 mt-8 border-b border-cyan-700 pb-2">🔗 區塊鏈與新興技術 (Blockchain & Emerging Tech)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <a href="https://casper3790.github.io/blockchain_knowledge_page/002.html" target="_blank" rel="noopener noreferrer" class="block" title="https://casper3790.github.io/blockchain_knowledge_page/002.html">
+                    <div class="bg-slate-800 p-6 rounded-xl shadow-xl transition duration-500 h-full flex flex-col justify-between group border border-slate-700 hover:border-cyan-400 hover:shadow-cyan-400/50 hover:bg-slate-700">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition">區塊鏈技術知識庫</h3>
+                            <p class="text-slate-300 mb-4">使用 Next.js 建構的靜態網站，提供關於區塊鏈和智能合約的學習資源和文章。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="inline-block bg-cyan-600/30 text-cyan-300 text-xs font-semibold px-3 py-1 rounded-full">React/Next.js</span>
+                            <svg class="w-5 h-5 text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section id="friends" class="py-16 md:py-24 border-t border-slate-800">
+            <h2 class="text-4xl font-extrabold text-cyan-400 mb-12 text-center tracking-tight">我的好友們</h2>
+            <div id="friends-container-wrapper" class="relative max-w-6xl mx-auto overflow-hidden">
+                <div id="friends-scroller" class="flex space-x-8">
+                    <div class="friend-card flex-shrink-0 text-center">
+                        <img src="TC.png" onerror="this.onerror=null; this.src='https://placehold.co/120x120/475569/fde047?text=Friend1'" alt="TC電神" class="w-32 h-32 rounded-full mx-auto border-4 border-slate-600 hover:border-cyan-400 transition-all duration-300 transform hover:scale-110 object-cover">
+                        <p class="mt-4 font-semibold text-lg text-slate-300">TC雲端電神</p>
+                    </div>
+                    <div class="friend-card flex-shrink-0 text-center">
+                        <img src="02.png" onerror="this.onerror=null; this.src='https://placehold.co/120x120/1e293b/fde047?text=Friend2'" alt="未來電神小蜥蜴" class="w-32 h-32 rounded-full mx-auto border-4 border-slate-600 hover:border-cyan-400 transition-all duration-300 transform hover:scale-110 object-cover">
+                        <p class="mt-4 font-semibold text-lg text-slate-300">未來電神小蜥蜴</p>
+                    </div>
+                    <div class="friend-card flex-shrink-0 text-center">
+                        <img src="05.jpg" onerror="this.onerror=null; this.src='https://placehold.co/120x120/475569/fde047?text=Friend3'" alt="朋友3的頭像" class="w-32 h-32 rounded-full mx-auto border-4 border-slate-600 hover:border-cyan-400 transition-all duration-300 transform hover:scale-110 object-cover">
+                        <p class="mt-4 font-semibold text-lg text-slate-300">躺贏狗兄弟</p>
+                    </div>
+                    <div class="friend-card flex-shrink-0 text-center">
+                        <img src="06.png" onerror="this.onerror=null; this.src='https://placehold.co/120x120/1e293b/fde047?text=Friend4'" alt="朋友4的頭像" class="w-32 h-32 rounded-full mx-auto border-4 border-slate-600 hover:border-cyan-400 transition-all duration-300 transform hover:scale-110 object-cover">
+                        <p class="mt-4 font-semibold text-lg text-slate-300">大安電神</p>
+                    </div>
+                    <div class="friend-card flex-shrink-0 text-center">
+                        <img src="friend-avatar.png" onerror="this.onerror=null; this.src='https://placehold.co/120x120/475569/fde047?text=Friend5'" alt="朋友5的頭像" class="w-32 h-32 rounded-full mx-auto border-4 border-slate-600 hover:border-cyan-400 transition-all duration-300 transform hover:scale-110 object-cover">
+                        <p class="mt-4 font-semibold text-lg text-slate-300">朋友五</p>
+                    </div>
+                    <div class="friend-card flex-shrink-0 text-center">
+                        <img src="friend-avatar.png" onerror="this.onerror=null; this.src='https://placehold.co/120x120/1e293b/fde047?text=Friend6'" alt="朋友6的頭像" class="w-32 h-32 rounded-full mx-auto border-4 border-slate-600 hover:border-cyan-400 transition-all duration-300 transform hover:scale-110 object-cover">
+                        <p class="mt-4 font-semibold text-lg text-slate-300">朋友六</p>
+                    </div>
+                     <div class="friend-card flex-shrink-0 text-center">
+                        <img src="friend-avatar.png" onerror="this.onerror=null; this.src='https://placehold.co/120x120/475569/fde047?text=Friend7'" alt="朋友7的頭像" class="w-32 h-32 rounded-full mx-auto border-4 border-slate-600 hover:border-cyan-400 transition-all duration-300 transform hover:scale-110 object-cover">
+                        <p class="mt-4 font-semibold text-lg text-slate-300">朋友七</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-16 md:py-24 border-t border-slate-800">
+            <h2 class="text-4xl font-extrabold text-cyan-400 mb-12 text-center tracking-tight">聯繫我</h2>
+            <div class="max-w-xl mx-auto bg-slate-800 p-8 rounded-xl shadow-2xl text-center">
+                <p class="text-lg text-slate-300 mb-6">
+                    如果您對我的開發有興趣，或是有任何問題，歡迎透過以下方式與我聯繫！
+                </p>
+                <div class="space-y-4">
+                    <p class="text-xl text-cyan-300 font-semibold">Email: casp3790er@gmail.com</p>
+                    <p class="text-lg text-slate-400">GitHub: <a href="https://github.com/casper3790" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition underline">https://github.com/casper3790</a></p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="py-6 text-center text-slate-500 text-sm border-t border-slate-800 mt-12">
+        <p>&copy; 感謝大家的參觀，歡迎向我合作</p>
+    </footer>
+
+    <script>
+        document.body.style.fontFamily = 'Inter, sans-serif';
+
+        const container = document.getElementById('bg-3d');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        const starVertices = [];
+        for (let i = 0; i < 5000; i++) {
+            const x = THREE.MathUtils.randFloatSpread(2000);
+            const y = THREE.MathUtils.randFloatSpread(2000);
+            const z = THREE.MathUtils.randFloatSpread(2000);
+            starVertices.push(x, y, z);
+        }
+
+        const starGeometry = new THREE.BufferGeometry();
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+
+        const starMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 1.5,
+            sizeAttenuation: true,
+            transparent: true,
+            opacity: 0.9
+        });
+
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            stars.rotation.x += 0.0001;
+            stars.rotation.y += 0.0002;
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- 好友牆無限滾動邏輯 ---
+        function initializeFriendScroller() {
+            const scroller = document.getElementById('friends-scroller');
+            if (scroller) {
+                const friendCards = Array.from(scroller.children);
+                // Duplicate the items to allow continuous scrolling effect
+                friendCards.forEach(card => {
+                    const duplicatedCard = card.cloneNode(true);
+                    duplicatedCard.setAttribute('aria-hidden', true);
+                    scroller.appendChild(duplicatedCard);
+                });
+            }
+        }
+        
+        window.onload = function () {
+            animate();
+            initializeFriendScroller();
+        }
+    </script>
+</body>
+</html>
